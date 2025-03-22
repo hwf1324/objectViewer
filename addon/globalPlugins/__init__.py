@@ -1,7 +1,7 @@
 # objectViewer add-on for NVDA
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
-# Copyright (C) 2024 hwf1324 <1398969445@qq.com>
+# Copyright (C) 2024-2025 hwf1324 <1398969445@qq.com>
 
 import api
 import config
@@ -27,7 +27,6 @@ config.conf.spec["objectViewer"] = confspec
 
 
 class ObjectViewerTool:
-
 	# Note: This is the Borg design pattern which ensures that all
 	# instances of this class are actually using the same set of
 	# instance data.  See
@@ -47,6 +46,7 @@ class ObjectViewerTool:
 		self._frame = None
 
 		import pythonConsole
+
 		if not pythonConsole.consoleUI:
 			pythonConsole.initialize()
 		self._namespace = pythonConsole.consoleUI.console.namespace
@@ -58,10 +58,7 @@ class ObjectViewerTool:
 			self.init()
 
 		if not self._frame:
-			self._frame = ObjectViewerFrame(
-				gui.mainFrame,
-				namespace=self._namespace
-			)
+			self._frame = ObjectViewerFrame(gui.mainFrame, namespace=self._namespace)
 
 		import pythonConsole
 
@@ -85,7 +82,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		# Translators: Description of the script to activate the Objects Viewer.
 		description=_("Activate the Object Viewer"),
-		category=SCRCAT_OBJECTS_VIEWER
+		category=SCRCAT_OBJECTS_VIEWER,
 	)
 	def script_activateObjectViewer(self, gesture):
 		ObjectViewerTool().show()
@@ -93,7 +90,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		# Translators: Description of the script to activate the Objects Viewer.
 		description=_("Activate the Object Viewer from focus object"),
-		category=SCRCAT_OBJECTS_VIEWER
+		category=SCRCAT_OBJECTS_VIEWER,
 	)
 	def script_activateObjectViewerFromFocus(self, gesture):
 		ObjectViewerTool().show(selectObj=api.getFocusObject())
@@ -101,7 +98,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		# Translators: Description of the script to activate the Objects Viewer.
 		description=_("Activate the Object Viewer from mouse object"),
-		category=SCRCAT_OBJECTS_VIEWER
+		category=SCRCAT_OBJECTS_VIEWER,
 	)
 	def script_activateObjectViewerFromMouse(self, gesture):
 		ObjectViewerTool().show(selectObj=api.getMouseObject())
@@ -109,7 +106,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 	@script(
 		# Translators: Description of the script to activate the Objects Viewer.
 		description=_("Activate the Object Viewer from navigator object"),
-		category=SCRCAT_OBJECTS_VIEWER
+		category=SCRCAT_OBJECTS_VIEWER,
 	)
 	def script_activateObjectViewerFromNavigator(self, gesture):
 		ObjectViewerTool().show(selectObj=api.getNavigatorObject())
