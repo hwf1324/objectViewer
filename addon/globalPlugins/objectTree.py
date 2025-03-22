@@ -1,7 +1,7 @@
 # objectViewer add-on for NVDA
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
-# Copyright (C) 2024 hwf1324 <1398969445@qq.com>
+# Copyright (C) 2024-2025 hwf1324 <1398969445@qq.com>
 
 import api
 import config
@@ -39,19 +39,15 @@ def extractSmallHICON(pszPath: str) -> shellapi.HICON:
 
 	psfi = SHFILEINFO()
 	uFlags = SHGFI_ICON | SHGFI_SMALLICON
-	shellapi.shell32.SHGetFileInfoW(
-		pszPath,
-		0,
-		shellapi.byref(psfi),
-		shellapi.sizeof(psfi),
-		uFlags
-	)
+	shellapi.shell32.SHGetFileInfoW(pszPath, 0, shellapi.byref(psfi), shellapi.sizeof(psfi), uFlags)
 
 	return psfi.hIcon
 
 
 def cleanupHICON(hicon: shellapi.HICON) -> None:
 	shellapi.windll.user32.DestroyIcon(hicon)
+
+
 # -----------------------------------------------------------------------------
 
 
@@ -67,16 +63,17 @@ def createIconFromPath(path: str) -> wx.Icon:
 
 class NVDAObjectTree(wx.TreeCtrl):
 	def __init__(
-			self,
-			parent,
-			simpleReviewMode: bool = config.conf["reviewCursor"]["simpleReviewMode"],
-			*args,
-			**kw,
+		self,
+		parent,
+		simpleReviewMode: bool = config.conf["reviewCursor"]["simpleReviewMode"],
+		*args,
+		**kw,
 	):
 		super().__init__(parent, *args, **kw)
 		self.simpleReviewMode = simpleReviewMode
 		rootNVDAObject: NVDAObject = api.getDesktopObject()
-		il = wx.ImageList(16, 16)
+		imageDPISize: int = int(16 * self.GetDPIScaleFactor())
+		il = wx.ImageList(imageDPISize, imageDPISize)
 		self.AssignImageList(il)
 		self.il = il
 		root: wx.TreeItemId = self.AddRoot(self.getObjectDisplayText(rootNVDAObject), data=rootNVDAObject)

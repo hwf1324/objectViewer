@@ -1,7 +1,7 @@
 # objectViewer add-on for NVDA
 # This file is covered by the GNU General Public License.
 # See the file COPYING.txt for more details.
-# Copyright (C) 2024 hwf1324 <1398969445@qq.com>
+# Copyright (C) 2024-2025 hwf1324 <1398969445@qq.com>
 
 import sys
 
@@ -15,18 +15,13 @@ from NVDAObjects import NVDAObject
 from .objectTree import NVDAObjectTree
 
 
-class ObjectViewerFrame(wx.Frame):
-	def __init__(
-			self,
-			parent,
-			namespace
-	):
+class ObjectViewerFrame(DpiScalingHelperMixinWithoutInit, wx.Frame):
+	def __init__(self, parent, namespace):
 		super().__init__(
 			parent,
 			wx.ID_ANY,
 			# Translators: The title of the Object Viewer frame.
 			_("Object Viewer"),
-			size=(850, 700),
 			style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP,
 		)
 
@@ -64,27 +59,31 @@ class ObjectViewerFrame(wx.Frame):
 		splitterSizer.Add(self.treeContentsSizer, proportion=1, flag=wx.EXPAND)
 		splitterSizer.Add(self.propertieContentsSizer.sizer, proportion=1, flag=wx.EXPAND)
 		self.panelContentsSizer.Add(splitterSizer, proportion=1, flag=wx.EXPAND)
-		self.panelContentsSizer.Add(self.crust, flag=wx.EXPAND)
+		self.panelContentsSizer.Add(self.crust, proportion=1, flag=wx.EXPAND)
 
 		self.Bind(wx.EVT_TREE_SEL_CHANGED, self.onSelectionChanged, self.objectTree)
 
 		self.makeMenuBar()
 
-		self.CenterOnScreen()
+		# setting the size must be done after the parent is constructed.
+		self.SetMinSize(self.scaleSize(self.MIN_SIZE))
+		self.SetSize(self.scaleSize(self.INITIAL_SIZE))
+		# the size has changed, so recenter on the screen
+		self.CentreOnScreen()
+
+	INITIAL_SIZE = (800, 480)
+	MIN_SIZE = (470, 240)
 
 	def createCrust(self, namespace):
 		import buildVersion
+
 		introText = _(
 			f"Python {sys.version.split()[0]} on {sys.platform}, NVDA {buildVersion.version}\n"
 			"NOTE: The 'obj' variable refers to the NVDA object selected in the tree."
 		)
 
 		crust = wx.py.crust.Crust(
-			self.panel,
-			size=(-1, 200),
-			locals=namespace,
-			intro=introText,
-			showInterpIntro=False
+			self.panel, size=(-1, 200), locals=namespace, intro=introText, showInterpIntro=False
 		)
 		crust.shell.SetBufferedDraw(False)
 		crust.filling.text.SetBufferedDraw(False)
@@ -96,13 +95,11 @@ class ObjectViewerFrame(wx.Frame):
 		treeMenu: wx.Menu = wx.Menu()
 		menu_addTreeNotesMode: wx.Menu = wx.Menu()
 		self.addTreeNotesChildrenMode: wx.MenuItem = menu_addTreeNotesMode.AppendRadioItem(
-			wx.ID_ANY,
-			_("children")
+			wx.ID_ANY, _("children")
 		)
 		self.addTreeNotesChildrenMode.Check(config.conf["objectViewer"]["addTreeNotesMode"] == "children")
 		self.addTreeNotesIteratorMode: wx.MenuItem = menu_addTreeNotesMode.AppendRadioItem(
-			wx.ID_ANY,
-			_("iterator")
+			wx.ID_ANY, _("iterator")
 		)
 		self.addTreeNotesIteratorMode.Check(config.conf["objectViewer"]["addTreeNotesMode"] == "iterator")
 		self.Bind(wx.EVT_MENU, self.onToggleAddTreeNotesMode, self.addTreeNotesChildrenMode)
