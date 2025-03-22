@@ -4,10 +4,11 @@
 # Copyright (C) 2024 hwf1324 <1398969445@qq.com>
 
 import sys
-import wx.py
+
 import config
 import gui.guiHelper
 import wx
+import wx.py
 from gui.nvdaControls import AutoWidthColumnListCtrl
 from NVDAObjects import NVDAObject
 
