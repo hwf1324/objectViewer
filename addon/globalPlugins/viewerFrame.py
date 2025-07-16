@@ -9,6 +9,7 @@ import config
 import gui.guiHelper
 import wx
 import wx.py
+from gui.dpiScalingHelper import DpiScalingHelperMixinWithoutInit
 from gui.nvdaControls import AutoWidthColumnListCtrl
 from NVDAObjects import NVDAObject
 
