@@ -5,71 +5,22 @@
 
 import api
 import config
-import shellapi
 import wx
 from NVDAObjects import NVDAObject
 
+from .icon import createIconFromPath
 from .NVDAObjectIterator import ObjectIterator
-
-
-# Code modified from:
-# https://solutionfall.com/question/why-isnt-shgetfileinfow-modifying-the-reference-passed-into-the-function/
-SHGFI_ICON = 0x000000100
-SHGFI_SMALLICON = 0x000000001
-SHGFI_LARGEICON = 0x000000000
-SHGFI_ATTRIBUTES = 0x000000800
-SHIL_JUMBO = 0x0004
-
-
-class SHFILEINFO(shellapi.Structure):
-	_fields_ = [
-		("hIcon", shellapi.HANDLE),
-		("iIcon", shellapi.c_int),
-		("dwAttributes", shellapi.DWORD),
-		("szDisplayName", shellapi.c_char * 260),
-		("szTypeName", shellapi.c_char * 80),
-	]
-
-
-def extractSmallHICON(pszPath: str) -> shellapi.HICON:
-	"""
-	Extract the small icon from the specified `filename`, which might be
-	either an executable or an `.ico` file.
-	"""
-
-	psfi = SHFILEINFO()
-	uFlags = SHGFI_ICON | SHGFI_SMALLICON
-	shellapi.shell32.SHGetFileInfoW(pszPath, 0, shellapi.byref(psfi), shellapi.sizeof(psfi), uFlags)
-
-	return psfi.hIcon
-
-
-def cleanupHICON(hicon: shellapi.HICON) -> None:
-	shellapi.windll.user32.DestroyIcon(hicon)
-
-
-# -----------------------------------------------------------------------------
-
-
-def createIconFromPath(path: str) -> wx.Icon:
-	icon: wx.Icon = wx.Icon()
-	hIcon: shellapi.HICON = extractSmallHICON(path)
-	if hIcon and icon.CreateFromHICON(hIcon):
-		return icon
-
-	cleanupHICON(hIcon)
-	return None
 
 
 class NVDAObjectTree(wx.TreeCtrl):
 	def __init__(
 		self,
-		parent,
+		parent: wx.Window,
 		simpleReviewMode: bool = config.conf["reviewCursor"]["simpleReviewMode"],
 		*args,
-		**kw,
+		**kwargs,
 	):
-		super().__init__(parent, *args, **kw)
+		super().__init__(parent, *args, **kwargs)
 		self.simpleReviewMode = simpleReviewMode
 		rootNVDAObject: NVDAObject = api.getDesktopObject()
 		imageDPISize: int = int(16 * self.GetDPIScaleFactor())
