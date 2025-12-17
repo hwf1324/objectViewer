@@ -23,7 +23,7 @@ class ObjectViewerFrame(DpiScalingHelperMixinWithoutInit, wx.Frame):
 			wx.ID_ANY,
 			# Translators: The title of the Object Viewer frame.
 			_("Object Viewer"),
-			style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP,
+			# style=wx.DEFAULT_FRAME_STYLE | wx.STAY_ON_TOP,
 		)
 
 		self.panel: wx.Panel = wx.Panel(self)
@@ -70,6 +70,7 @@ class ObjectViewerFrame(DpiScalingHelperMixinWithoutInit, wx.Frame):
 		self.SetMinSize(self.scaleSize(self.MIN_SIZE))
 		self.SetSize(self.scaleSize(self.INITIAL_SIZE))
 		# the size has changed, so recenter on the screen
+		self.SetTransparent(int(255 * 0.9))
 		self.CentreOnScreen()
 
 	INITIAL_SIZE = (800, 480)
