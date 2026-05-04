@@ -39,7 +39,10 @@ class ObjectViewerFrame(DpiScalingHelperMixinWithoutInit, wx.Frame):
 		self.frameContentsSizer: wx.BoxSizer = wx.BoxSizer(wx.VERTICAL)
 		self.SetSizer(self.frameContentsSizer)
 		self.frameContentsSizer.Add(
-			self.panel, proportion=1, flag=wx.EXPAND, border=gui.guiHelper.BORDER_FOR_DIALOGS
+			self.panel,
+			proportion=1,
+			flag=wx.EXPAND,
+			border=gui.guiHelper.BORDER_FOR_DIALOGS,
 		)
 		self.panelContentsSizer: wx.BoxSizer = wx.BoxSizer(wx.VERTICAL)
 		self.panel.SetSizer(self.panelContentsSizer)
@@ -48,7 +51,8 @@ class ObjectViewerFrame(DpiScalingHelperMixinWithoutInit, wx.Frame):
 
 		self.treeContentsSizer.Add(self.objectTree, proportion=1, flag=wx.EXPAND)
 		self.propertieContentsSizer: gui.guiHelper.BoxSizerHelper = gui.guiHelper.BoxSizerHelper(
-			self.panel, sizer=wx.StaticBoxSizer(wx.VERTICAL, self.panel, _("Object Properties"))
+			self.panel,
+			sizer=wx.StaticBoxSizer(wx.VERTICAL, self.panel, _("Object Properties")),
 		)
 		self.objectPropertieLabel: wx.StaticText = wx.StaticText(self.panel, label="")
 		font: wx.Font = wx.Font(18, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
@@ -80,11 +84,15 @@ class ObjectViewerFrame(DpiScalingHelperMixinWithoutInit, wx.Frame):
 
 		introText = _(
 			f"Python {sys.version.split()[0]} on {sys.platform}, NVDA {buildVersion.version}\n"
-			"NOTE: The 'obj' variable refers to the NVDA object selected in the tree."
+			"NOTE: The 'obj' variable refers to the NVDA object selected in the tree.",
 		)
 
 		crust = wx.py.crust.Crust(
-			self.panel, size=(-1, 200), locals=namespace, intro=introText, showInterpIntro=False
+			self.panel,
+			size=(-1, 200),
+			locals=namespace,
+			intro=introText,
+			showInterpIntro=False,
 		)
 		crust.shell.SetBufferedDraw(False)
 		crust.filling.text.SetBufferedDraw(False)
@@ -96,11 +104,13 @@ class ObjectViewerFrame(DpiScalingHelperMixinWithoutInit, wx.Frame):
 		treeMenu: wx.Menu = wx.Menu()
 		menu_addTreeNotesMode: wx.Menu = wx.Menu()
 		self.addTreeNotesChildrenMode: wx.MenuItem = menu_addTreeNotesMode.AppendRadioItem(
-			wx.ID_ANY, _("children")
+			wx.ID_ANY,
+			_("children"),
 		)
 		self.addTreeNotesChildrenMode.Check(config.conf["objectViewer"]["addTreeNotesMode"] == "children")
 		self.addTreeNotesIteratorMode: wx.MenuItem = menu_addTreeNotesMode.AppendRadioItem(
-			wx.ID_ANY, _("iterator")
+			wx.ID_ANY,
+			_("iterator"),
 		)
 		self.addTreeNotesIteratorMode.Check(config.conf["objectViewer"]["addTreeNotesMode"] == "iterator")
 		self.Bind(wx.EVT_MENU, self.onToggleAddTreeNotesMode, self.addTreeNotesChildrenMode)
