@@ -94,17 +94,19 @@ class ObjectViewerFrame(DpiScalingHelperMixinWithoutInit, wx.Frame):
 
 	def makeMenuBar(self):
 		treeMenu: wx.Menu = wx.Menu()
-		menu_addTreeNotesMode: wx.Menu = wx.Menu()
-		self.addTreeNotesChildrenMode: wx.MenuItem = menu_addTreeNotesMode.AppendRadioItem(
+
+		menu_addTreeNodesMode: wx.Menu = wx.Menu()
+		self.addTreeNodesChildrenMode: wx.MenuItem = menu_addTreeNodesMode.AppendRadioItem(
 			wx.ID_ANY, _("children")
 		)
-		self.addTreeNotesChildrenMode.Check(config.conf["objectViewer"]["addTreeNotesMode"] == "children")
-		self.addTreeNotesIteratorMode: wx.MenuItem = menu_addTreeNotesMode.AppendRadioItem(
+		self.addTreeNodesChildrenMode.Check(config.conf["objectViewer"]["addTreeNodesMode"] == "children")
+		self.addTreeNodesIteratorMode: wx.MenuItem = menu_addTreeNodesMode.AppendRadioItem(
 			wx.ID_ANY, _("iterator")
 		)
-		self.addTreeNotesIteratorMode.Check(config.conf["objectViewer"]["addTreeNotesMode"] == "iterator")
-		self.Bind(wx.EVT_MENU, self.onToggleAddTreeNotesMode, self.addTreeNotesChildrenMode)
-		self.Bind(wx.EVT_MENU, self.onToggleAddTreeNotesMode, self.addTreeNotesIteratorMode)
+		self.addTreeNodesIteratorMode.Check(config.conf["objectViewer"]["addTreeNodesMode"] == "iterator")
+		self.Bind(wx.EVT_MENU, self.onToggleAddTreeNodesMode, self.addTreeNodesChildrenMode)
+		self.Bind(wx.EVT_MENU, self.onToggleAddTreeNodesMode, self.addTreeNodesIteratorMode)
+
 		menu_reviewMode: wx.Menu = wx.Menu()
 		self.nvdaReviewMode: wx.MenuItem = menu_reviewMode.AppendCheckItem(
 			wx.ID_ANY,
@@ -123,23 +125,28 @@ class ObjectViewerFrame(DpiScalingHelperMixinWithoutInit, wx.Frame):
 		if self.nvdaReviewMode.IsChecked():
 			self.simpleReviewMode.Enable(False)
 		self.Bind(wx.EVT_MENU, self.onToggleReviewMode, self.simpleReviewMode)
-		treeMenu.AppendSubMenu(menu_addTreeNotesMode, _("&Add tree notes mode..."))
-		treeMenu.AppendMenu(
-			wx.ID_ANY,
-			_("&Review mode..."),
+
+		treeMenu.AppendSubMenu(
+			menu_addTreeNodesMode,
+			_("&Add tree nodes mode..."),
+			_("Configure the way the tree view adds nodes for NVDA objects."),
+		)
+		treeMenu.AppendSubMenu(
 			menu_reviewMode,
+			_("&Review mode..."),
 			_("Configure the way the tree view retrieves NVDA objects."),
 		)
 		self.Bind(wx.EVT_MENU, self.onToggleReviewMode, self.simpleReviewMode)
+
 		self.menuBar: wx.MenuBar = wx.MenuBar()
 		self.menuBar.Append(treeMenu, _("Objects &tree"))
 		self.SetMenuBar(self.menuBar)
 
-	def onToggleAddTreeNotesMode(self, event: wx.CommandEvent):
-		if event.GetId() == self.addTreeNotesChildrenMode.GetId():
-			config.conf["objectViewer"]["addTreeNotesMode"] = "children"
-		elif event.GetId() == self.addTreeNotesIteratorMode.GetId():
-			config.conf["objectViewer"]["addTreeNotesMode"] = "iterator"
+	def onToggleAddTreeNodesMode(self, event: wx.CommandEvent):
+		if event.GetId() == self.addTreeNodesChildrenMode.GetId():
+			config.conf["objectViewer"]["addTreeNodesMode"] = "children"
+		elif event.GetId() == self.addTreeNodesIteratorMode.GetId():
+			config.conf["objectViewer"]["addTreeNodesMode"] = "iterator"
 
 		self.objectTree.CollapseAll()
 		event.Skip()
@@ -151,7 +158,7 @@ class ObjectViewerFrame(DpiScalingHelperMixinWithoutInit, wx.Frame):
 		else:
 			self.simpleReviewMode.Enable(True)
 
-		config.conf["objectViewer"]["addTreeNotesMode"] = "iterator"
+		config.conf["objectViewer"]["addTreeNodesMode"] = "iterator"
 		self.objectTree.CollapseAll()
 		event.Skip()
 

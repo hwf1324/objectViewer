@@ -20,7 +20,7 @@ SCRCAT_OBJECTS_VIEWER = _("Object Viewer")
 confspec = {
 	"nvdaReviewMode": "boolean(default=True)",
 	"simpleReviewMode": "boolean(default=False)",
-	"addTreeNotesMode": 'string(default="children")',
+	"addTreeNodesMode": 'string(default="children")',
 }
 
 config.conf.spec["objectViewer"] = confspec

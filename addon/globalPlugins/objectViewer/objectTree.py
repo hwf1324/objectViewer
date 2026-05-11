@@ -34,12 +34,12 @@ class NVDAObjectTree(wx.TreeCtrl):
 		self.Bind(wx.EVT_TREE_ITEM_EXPANDING, self.onItemExpanding)
 		self.Bind(wx.EVT_TREE_ITEM_COLLAPSED, self.onItemCollapsed)
 
-	def addTreeNotes(self, parentItem: wx.TreeItemId):
+	def addTreeNodes(self, parentItem: wx.TreeItemId):
 		parentObj: NVDAObject = self.GetItemData(parentItem)
-		if config.conf["objectViewer"]["addTreeNotesMode"] == "children":
-			self._addTreeNotesFromChildren(parentItem, parentObj)
-		elif config.conf["objectViewer"]["addTreeNotesMode"] == "iterator":
-			self._addTreeNotesFromIterator(parentItem, parentObj)
+		if config.conf["objectViewer"]["addTreeNodesMode"] == "children":
+			self._addTreeNodesFromChildren(parentItem, parentObj)
+		elif config.conf["objectViewer"]["addTreeNodesMode"] == "iterator":
+			self._addTreeNodesFromIterator(parentItem, parentObj)
 
 	def appendTreeItem(self, parentItem: wx.TreeItemId, obj: NVDAObject) -> wx.TreeItemId:
 		item = self.AppendItem(parentItem, self.getObjectDisplayText(obj), data=obj)
@@ -51,7 +51,7 @@ class NVDAObjectTree(wx.TreeCtrl):
 
 		return item
 
-	def _addTreeNotesFromChildren(self, parentItem: wx.TreeItemId, parentObj: NVDAObject):
+	def _addTreeNodesFromChildren(self, parentItem: wx.TreeItemId, parentObj: NVDAObject):
 		for obj in parentObj.children:
 			item: wx.TreeItemId = self.appendTreeItem(parentItem, obj)
 			if obj.firstChild:
@@ -59,7 +59,7 @@ class NVDAObjectTree(wx.TreeCtrl):
 			else:
 				self.SetItemHasChildren(item, False)
 
-	def _addTreeNotesFromIterator(self, parentItem: wx.TreeItemId, parentObj: NVDAObject):
+	def _addTreeNodesFromIterator(self, parentItem: wx.TreeItemId, parentObj: NVDAObject):
 		for obj in ObjectIterator(parentObj, "children", self.simpleReviewMode):
 			item = self.appendTreeItem(parentItem, obj)
 			if obj.simpleFirstChild if self.simpleReviewMode else obj.firstChild:
@@ -71,7 +71,7 @@ class NVDAObjectTree(wx.TreeCtrl):
 		return f'{obj.role.displayString} "{obj.name}"'
 
 	def selectObject(self, obj: NVDAObject = api.getNavigatorObject()):
-		config.conf["objectViewer"]["addTreeNotesMode"] = "iterator"
+		config.conf["objectViewer"]["addTreeNodesMode"] = "iterator"
 		parentItem: wx.TreeItemId = self.GetRootItem()
 		self.CollapseAll()
 		item: wx.TreeItemId = None
@@ -103,7 +103,7 @@ class NVDAObjectTree(wx.TreeCtrl):
 
 	def onItemExpanding(self, event: wx.TreeEvent):
 		self.Freeze()
-		self.addTreeNotes(event.GetItem())
+		self.addTreeNodes(event.GetItem())
 		self.Thaw()
 		event.Skip()
 
