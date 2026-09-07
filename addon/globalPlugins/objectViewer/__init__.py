@@ -12,7 +12,6 @@ from scriptHandler import script
 
 from .viewerFrame import ObjectViewerFrame
 
-
 # Translators: The name of a category of NVDA commands.
 # Script category for Object Viewer commands.
 SCRCAT_OBJECTS_VIEWER = _("Object Viewer")
